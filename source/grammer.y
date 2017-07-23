@@ -15,9 +15,12 @@ int yyerror(char *s);
 %}
 
 %token RETURN
+%token IF
+%token ELSE
 %token IDENTIFIER
 %token INTEGER
 %token OPERATOR
+%token UNARY
 %token INDENT
 %token DEDENT
 
@@ -25,64 +28,103 @@ int yyerror(char *s);
 
 declarations:
 
-    | declarations declaration
+    | declaration declarations
     ;
 
 declaration:
-      funchead INDENT funcbody DEDENT   { printf("Get a function declaration.\n"); }
+      function_declaration
     ;
 
-funchead:
-      funcname '(' arglist ')' typedecl { printf("Get a function head.\n"); }
-    | funcname '(' arglist ')'
+function_declaration:
+      function_name function_type function_body { printf("Get a function declaration.\n"); }
     ;
 
-funcname:
-      IDENTIFIER        { printf("Get a function name.\n"); }
+function_name:
+      IDENTIFIER    { printf("Get a function name.\n"); }
     ;
 
-arglist:
-    | arg
-    | arglist ',' arg
+function_type:
+      '(' arguments_type_list ')' return_type   { printf("Get a function type.\n"); }
     ;
 
-arg:
-      argname typedecl  { printf("Get a argument.\n"); }
-    | argname
+arguments_type_list:
+
+    | argument_name argument_type   { printf("Get an arguents type list.\n"); }
+    | argument_name argument_type ',' arguments_type_list
     ;
 
-argname:
-      IDENTIFIER        { printf("Get an argument name.\n"); }
-    | INTEGER           { printf("Get an argument integer.\n"); }
+argument_name:
+      IDENTIFIER    { printf("Get an argument name.\n"); }
     ;
 
-typedecl:
-      ':' typename
-
-typename:
-      IDENTIFIER
-    | typemod typename
+argument_type:
+      type_declaration
     ;
 
-typemod:
-      '>'
+return_type:
+      type_declaration
     ;
 
-funcbody:
-      statlist          { printf("Get a list of statement.\n"); }
+type_declaration:
+      ':' type_name
     ;
 
-statlist:
+type_name:
+      IDENTIFIER                { printf("Get a type name.\n"); }
+    | type_modifier type_name   { printf("Get a type name.\n"); }
+    ;
 
-    | statlist statement
+type_modifier:
+      '>'   { printf("Get a type modifier.\n"); }
+    ;
+
+function_body:
+      block
+    ;
+
+block:
+      INDENT statements_list DEDENT
+    ;
+
+statements_list:
+      statement
+    | statement statements_list
     ;
 
 statement:
-      RETURN expression
+      RETURN expression { printf("Get a return expression.\n"); }
+    | IF expression block ELSE block    { printf("Get an if-else expression.\n"); }
     ;
 
 expression:
-      funcname '(' arglist ')'  { printf("Get an expression.\n"); }
+      expression2 OPERATOR expression
+    | expression2
+    ;
+
+expression2:
+      UNARY expression3
+    | expression3
+    ;
+
+expression3:
+      expression4 '(' arguments_list ')'
+    | expression4
+    ;
+
+expression4:
+      INTEGER
+    | IDENTIFIER
+    | '(' expression ')'
+    ;
+
+arguments_list:
+
+    | argument
+    | argument ',' arguments_list
+    ;
+
+argument:
+      expression
     ;
 
 %%

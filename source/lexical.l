@@ -19,6 +19,8 @@ OPERATOR_CHARSET3   [!?@#%^&*\-+_\'|/<=]
 
 %{
 
+#include "y.tab.h"
+
 int prespace_indent_level(int count);
 char *strip(char *origin);
 
@@ -26,21 +28,19 @@ char *strip(char *origin);
 
 %%
 
-(\n" "*)?;.*$       { printf("<Comment>"); }
+(\n" "*)?;.*$       { /* Ignore comments. */ }
 
-\n                  { printf("\n"); BEGIN(PRESPACE); }
+\n                  { BEGIN(PRESPACE); }
 
 <PRESPACE>" "*/.    |
 <PRESPACE><<EOF>>   {
                         switch (prespace_indent_level(yyleng)) {
                             case 1: {
-                                printf("<Indent>");
                                 BEGIN(INITIAL);
-                                break;
+                                return INDENT;
                             }
                             case -1: {
-                                printf("<Dedent>");
-                                break;
+                                return DEDENT;
                             }
                             default: {
                                 BEGIN(INITIAL);
@@ -49,21 +49,26 @@ char *strip(char *origin);
                         }
                     }
 
-\n" "*$             { printf("<Blank Line>"); }
+\n" "*$             { /* Ignore blank lines. */ }
 
-return              { printf("<Return>"); }
+return              { return RETURN; }
+if                  { return IF; }
+else                { return ELSE; }
 
--?[0-9]+            { printf("<Int %d>", atoi(yytext)); }
+-?[0-9]+            { return INTEGER; }
 
-{ID_CHARSET1}{ID_CHARSET2}*{ID_CHARSET3}?   { printf("<ID %s>", yytext); }
+{ID_CHARSET1}{ID_CHARSET2}*{ID_CHARSET3}?   { printf("<ID %s>\n", yytext); return IDENTIFIER; }
 
 " "{OPERATOR_CHARSET1}+" "                  |
-" *"{OPERATOR_CHARSET2}+"* "                { printf("<OP %s>", strip(yytext)); }
+" *"{OPERATOR_CHARSET2}+"* "                { return OPERATOR; }
 
-" "{OPERATOR_CHARSET1}+/"("                 { printf("<UNARY %s>", strip(yytext)); }
-" "{OPERATOR_CHARSET3}+/{ID_CHARSET1}       { printf("<UNARY %s>", strip(yytext)); }
-" "{OPERATOR_CHARSET1}+/[0-9]               { printf("<UNARY %s>", strip(yytext)); }
+" "{OPERATOR_CHARSET1}+/"("                 { return UNARY; }
+" "{OPERATOR_CHARSET3}+/{ID_CHARSET1}       { return UNARY; }
+" "{OPERATOR_CHARSET1}+/[0-9]               { return UNARY; }
 
+" "+                { /* Ignore seperated spaces. */ }
+
+.                   { printf("<Unknown %c>\n", yytext[0]); return yytext[0]; }
 
 %%
 

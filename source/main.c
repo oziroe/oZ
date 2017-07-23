@@ -5,7 +5,7 @@
  */
 #include <stdio.h>
 
-extern int yylex(void);
+extern int yyparse(void);
 extern FILE *yyin;
 
 int main(int argc, char *argv[])
@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
     if (argc == 2)
     {
         yyin = fopen(argv[1], "r");
-        return yylex();
+        return yyparse();
     }
     else
     {
