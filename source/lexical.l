@@ -21,8 +21,8 @@ OPERATOR_CHARSET3   [!?@#%^&*\-+_\'|/<=]
 
 #include "y.tab.h"
 
-int prespace_indent_level(int count);
-char *strip(char *origin);
+int     prespace_indent_level(int count);
+char *  strip(char *origin);
 
 %}
 
@@ -51,13 +51,13 @@ char *strip(char *origin);
 
 \n" "*$             { /* Ignore blank lines. */ }
 
-return              { return RETURN; }
-if                  { return IF; }
-else                { return ELSE; }
+return              { return RETURN;    }
+if                  { return IF;        }
+else                { return ELSE;      }
 
--?[0-9]+            { return INTEGER; }
+-?[0-9]+            { return INTEGER;   }
 
-{ID_CHARSET1}{ID_CHARSET2}*{ID_CHARSET3}?   { printf("<ID %s>\n", yytext); return IDENTIFIER; }
+{ID_CHARSET1}{ID_CHARSET2}*{ID_CHARSET3}?   { return IDENTIFIER; }
 
 " "{OPERATOR_CHARSET1}+" "                  |
 " *"{OPERATOR_CHARSET2}+"* "                { return OPERATOR; }
@@ -68,7 +68,7 @@ else                { return ELSE; }
 
 " "+                { /* Ignore seperated spaces. */ }
 
-.                   { printf("<Unknown %c>\n", yytext[0]); return yytext[0]; }
+.                   { return yytext[0]; }
 
 %%
 

@@ -9,8 +9,9 @@
 
 #include <stdio.h>
 
-extern int yylex(void);
-int yyerror(char *s);
+// Prevent compiler warnings.
+extern int  yylex(void);
+int         yyerror(char *s);
 
 %}
 
@@ -36,25 +37,25 @@ declaration:
     ;
 
 function_declaration:
-      function_name function_type function_body { printf("Get a function declaration.\n"); }
+      function_name function_type function_body
     ;
 
 function_name:
-      IDENTIFIER    { printf("Get a function name.\n"); }
+      IDENTIFIER
     ;
 
 function_type:
-      '(' arguments_type_list ')' return_type   { printf("Get a function type.\n"); }
+      '(' arguments_type_list ')' return_type
     ;
 
 arguments_type_list:
 
-    | argument_name argument_type   { printf("Get an arguents type list.\n"); }
+    | argument_name argument_type
     | argument_name argument_type ',' arguments_type_list
     ;
 
 argument_name:
-      IDENTIFIER    { printf("Get an argument name.\n"); }
+      IDENTIFIER
     ;
 
 argument_type:
@@ -70,12 +71,12 @@ type_declaration:
     ;
 
 type_name:
-      IDENTIFIER                { printf("Get a type name.\n"); }
-    | type_modifier type_name   { printf("Get a type name.\n"); }
+      IDENTIFIER
+    | type_modifier type_name
     ;
 
 type_modifier:
-      '>'   { printf("Get a type modifier.\n"); }
+      '>'
     ;
 
 function_body:
@@ -92,8 +93,8 @@ statements_list:
     ;
 
 statement:
-      RETURN expression { printf("Get a return expression.\n"); }
-    | IF expression block ELSE block    { printf("Get an if-else expression.\n"); }
+      RETURN expression
+    | IF expression block ELSE block
     ;
 
 expression:
