@@ -11,20 +11,115 @@
 ID_CHARSET1         [a-zA-Z_]
 ID_CHARSET2         [a-zA-Z0-9_]
 ID_CHARSET3         [a-zA-Z0-9_!?]
-OPERATOR_CHARSET1   [!?@#%^&*-+_\'|/<>=]
+OPERATOR_CHARSET1   [!?@#%^&*\-+_\'|/<>=]
 OPERATOR_CHARSET2   [a-zA-Z_]
-SPACE               [ \n]
+OPERATOR_CHARSET3   [!?@#%^&*\-+_\'|/<=]
+
+%x PRESPACE
+
+%{
+
+int prespace_indent_level(int count);
+char *strip(char *origin);
+
+%}
 
 %%
 
-;.*\n       |
-^" "*\n     { /* Ignore comments and blank lines. */ }
+(\n" "*)?;.*$       { printf("<Comment>"); }
 
-^" "*       { printf("<PRESPACE %lu> ", yyleng); }
+\n                  { printf("\n"); BEGIN(PRESPACE); }
 
-{ID_CHARSET1}{ID_CHARSET2}*{ID_CHARSET3}?   { printf(" <ID %s> ", yytext); }
+<PRESPACE>" "*/.    |
+<PRESPACE><<EOF>>   {
+                        switch (prespace_indent_level(yyleng)) {
+                            case 1: {
+                                printf("<Indent>");
+                                BEGIN(INITIAL);
+                                break;
+                            }
+                            case -1: {
+                                printf("<Dedent>");
+                                break;
+                            }
+                            default: {
+                                BEGIN(INITIAL);
+                                break;
+                            }
+                        }
+                    }
 
-[0-9]+      { printf(" <INT %d> ", atoi(yytext)); }
+\n" "*$             { printf("<Blank Line>"); }
 
-" "{OPERATOR_CHARSET1}+{SPACE}      |
-" *"{OPERATOR_CHARSET2}"*"{SPACE}   { printf(" <OPERATOR %s> ", yytext); }
+return              { printf("<Return>"); }
+
+-?[0-9]+            { printf("<Int %d>", atoi(yytext)); }
+
+{ID_CHARSET1}{ID_CHARSET2}*{ID_CHARSET3}?   { printf("<ID %s>", yytext); }
+
+" "{OPERATOR_CHARSET1}+" "                  |
+" *"{OPERATOR_CHARSET2}+"* "                { printf("<OP %s>", strip(yytext)); }
+
+" "{OPERATOR_CHARSET1}+/"("                 { printf("<UNARY %s>", strip(yytext)); }
+" "{OPERATOR_CHARSET3}+/{ID_CHARSET1}       { printf("<UNARY %s>", strip(yytext)); }
+" "{OPERATOR_CHARSET1}+/[0-9]               { printf("<UNARY %s>", strip(yytext)); }
+
+
+%%
+
+int prespace_indent_level(int count)
+{
+    static int previous = 0, remain = 0, mode = 0;
+
+    if (mode == 1)  // dedent counting mode
+    {
+        if (remain != 0)
+        {
+            remain--;
+            return -1;
+        }
+        else
+        {
+            mode = 0;
+            return 0;
+        }
+    }
+    else  // mode == 0, normal mode
+    {
+        int level = count / 4;
+        if (level == previous)
+            return 0;
+        else if (level == previous + 1)
+        {
+            previous++;
+            return 1;
+        }
+        else if (level > previous + 1)
+        {
+            fprintf(stderr, "ERROR: Indent more than one level at a time.\n");
+            exit(1);
+        }
+        else
+        {
+            remain = previous - level - 1;
+            mode = 1;
+            previous = level;
+            return -1;
+        }
+    }
+}
+
+char *strip(char *origin)
+{
+    int i, start;
+
+    for (i = 0; origin[i] == ' '; i++)
+        ;
+    start = i;
+
+    for (; origin[i] != ' ' && origin[i] != '\0'; i++)
+        ;
+    origin[i] = '\0';
+
+    return origin + start;
+}

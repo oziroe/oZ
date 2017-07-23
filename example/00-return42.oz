@@ -7,7 +7,10 @@
 ;
 
 Main(argv: >>Char): Int
-    return Add(40, 2)
+    return AbsAdd(-40, 2)
 
-Add(x: Int, y: Int): Int
-    return x + y
+AbsAdd(x: Int, y: Int): Int
+    if x * y >= 0
+        return x + y
+    else
+        return -(x + y)

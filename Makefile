@@ -1,13 +1,16 @@
 #
 # Makefile
 #
-# Created by oziroe on July 22, 2017.
+# Created by oziroe on July 23, 2017.
 #
-all: source/main
-	mv source/main oz
 
-source/main: source/lexical.o
+all: source/oz
+	mv source/oz .
 
-.PHONY: clean
+source/oz:
+	cd source && make
+
+.PNONY: clean
 clean:
-	rm source/*.o oz
+	cd source && make clean
+	rm oz
