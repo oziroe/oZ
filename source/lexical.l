@@ -55,16 +55,27 @@ return              { return RETURN;    }
 if                  { return IF;        }
 else                { return ELSE;      }
 
--?[0-9]+            { return INTEGER;   }
+-?[0-9]+            {
+                        yylval.integer_value = atoi(yytext);
+                        return INTEGER;
+                    }
 
-{ID_CHARSET1}{ID_CHARSET2}*{ID_CHARSET3}?   { return IDENTIFIER; }
+{ID_CHARSET1}{ID_CHARSET2}*{ID_CHARSET3}?   {
+                                                yylval.string_value = yytext;
+                                                return IDENTIFIER;
+                                            }
 
 " "{OPERATOR_CHARSET1}+" "                  |
-" *"{OPERATOR_CHARSET2}+"* "                { return OPERATOR; }
+" *"{OPERATOR_CHARSET2}+"* "                {
+                                                yylval.string_value = strip(yytext);
+                                                return OPERATOR;
+                                            }
 
-" "{OPERATOR_CHARSET1}+/"("                 { return UNARY; }
-" "{OPERATOR_CHARSET3}+/{ID_CHARSET1}       { return UNARY; }
-" "{OPERATOR_CHARSET1}+/[0-9]               { return UNARY; }
+" "{OPERATOR_CHARSET3}+/{ID_CHARSET1}       |
+" "{OPERATOR_CHARSET1}+/("("|[0-9])         {
+                                                yylval.string_value = strip(yytext);
+                                                return UNARY;
+                                            }
 
 " "+                { /* Ignore seperated spaces. */ }
 

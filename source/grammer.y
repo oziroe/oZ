@@ -15,15 +15,16 @@ int         yyerror(char *s);
 
 %}
 
-%token RETURN
-%token IF
-%token ELSE
-%token IDENTIFIER
-%token INTEGER
-%token OPERATOR
-%token UNARY
-%token INDENT
-%token DEDENT
+%union {
+    int     integer_value;
+    double  double_value;
+    char *  string_value;
+}
+
+%token RETURN IF ELSE
+%token INDENT DEDENT
+%token <string_value> IDENTIFIER OPERATOR UNARY
+%token <integer_value> INTEGER
 
 %%
 
