@@ -11,7 +11,8 @@
 
 typedef struct Expression4 *OzExpression4;
 
-OzExpression4 oz_create_expression4_integer(int value);
-OzExpression4 oz_create_expression4_identifier(char *name);
+OzExpression4   oz_create_expression4_integer   (int value);
+OzExpression4   oz_create_expression4_identifier(char *name);
+void            oz_print_expression4            (OzExpression4 ex4);
 
 #endif

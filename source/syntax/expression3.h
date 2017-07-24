@@ -12,6 +12,7 @@
 
 typedef struct Expression3 *OzExpression3;
 
-OzExpression4 oz_create_expression3_expression4(OzExpression4 ex4);
+OzExpression4   oz_create_expression3_expression4   (OzExpression4 ex4);
+void            oz_print_expression3                (OzExpression3 ex3);
 
 #endif

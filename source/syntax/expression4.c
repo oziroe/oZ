@@ -6,6 +6,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 struct Expression4
 {
@@ -13,7 +14,7 @@ struct Expression4
     union
     {
         int integer_value;
-        char *identifier_value;
+        char *identifier_value;  // TODO: Change to pointer to symbol table.
     } value;
 };
 
@@ -32,4 +33,25 @@ struct Expression4 *oz_create_expression4_identifier(char *name)
     ex4->value.identifier_value = malloc(sizeof(char) * (strlen(name) + 1));
     strcpy(ex4->value.identifier_value, name);
     return ex4;
+}
+
+void oz_print_expression4(struct Expression4 *ex4)
+{
+    const char *type_name[] = { "int", "id", "expr" };
+    printf("[ expr4 <%s> ", type_name[ex4->type]);
+    switch (ex4->type)
+    {
+        case INTEGER: {
+            printf("%d ]", ex4->value.integer_value);
+            break;
+        }
+        case IDENTIFIER: {
+            printf("%s ]", ex4->value.identifier_value);
+            break;
+        }
+        default: {
+            printf("expr ]");  // TODO: Call expression print.
+            break;
+        }
+    }
 }

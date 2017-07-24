@@ -5,6 +5,7 @@
 //
 
 #include <stdlib.h>
+#include <stdio.h>
 #include "expression4.h"
 
 struct Expression3
@@ -25,4 +26,27 @@ struct Expression3 *oz_create_expression3_expression4(OzExpression4 ex4)
     ex3->type = EXPRESSION4;
     ex3->value.expression4_value = ex4;
     return ex3;
+}
+
+void oz_print_expression3(struct Expression3 *ex3)
+{
+    const char *type_name[] = { "apply", "expr4" };
+    printf("[ expr3 <%s> ", type_name[ex3->type]);
+    switch (ex3->type)
+    {
+        case APPLY: {
+            oz_print_expression4(ex3->value.apply_value.expression);
+            printf(" ]");  // TODO: print arugments
+            break;
+        }
+        case EXPRESSION4: {
+            oz_print_expression4(ex3->value.expression4_value);
+            printf(" ]");
+            break;
+        }
+        default: {
+            printf("*unknown* ]");
+            break;
+        }
+    }
 }

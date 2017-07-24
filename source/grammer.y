@@ -33,7 +33,7 @@ typedef void *Node;
 %token <string_value> IDENTIFIER OPERATOR UNARY
 %token <integer_value> INTEGER
 
-%type <node_value> expression4, expression3
+%type <node_value> expression4 expression3
 
 %%
 
@@ -121,7 +121,10 @@ expression2:
 
 expression3:
       expression4 '(' arguments_sequence ')'
-    | expression4           { $$ = (Node)oz_create_expression3_expression4((OzExpression4)$1); }
+    | expression4
+    {
+        $$ = (Node)oz_create_expression3_expression4((OzExpression4)$1);
+    }
     ;
 
 expression4:
