@@ -9,9 +9,13 @@
 
 #include <stdio.h>
 
+#include "syntax/expression4.h"
+
 // Prevent compiler warnings.
 extern int  yylex(void);
 int         yyerror(char *s);
+
+typedef void *Node;
 
 %}
 
@@ -19,12 +23,16 @@ int         yyerror(char *s);
     int     integer_value;
     double  double_value;
     char *  string_value;
+    // Can not use `Node` as its type, because lexical rule cannot know it.
+    void *  node_value;
 }
 
 %token RETURN IF ELSE
 %token INDENT DEDENT
 %token <string_value> IDENTIFIER OPERATOR UNARY
 %token <integer_value> INTEGER
+
+%type <node_value> expression4
 
 %%
 
@@ -116,8 +124,8 @@ expression3:
     ;
 
 expression4:
-      INTEGER
-    | IDENTIFIER
+      INTEGER               { $$ = (Node)oz_create_expression4_integer($1); }
+    | IDENTIFIER            { $$ = (Node)oz_create_expression4_identifier($1); }
     | '(' expression ')'
     ;
 
