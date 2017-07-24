@@ -30,7 +30,7 @@ int         yyerror(char *s);
 
 declarations:
 
-    | declaration declarations
+    | declarations declaration
     ;
 
 declaration:
@@ -46,13 +46,13 @@ function_name:
     ;
 
 function_type:
-      '(' arguments_type_list ')' return_type
+      '(' arguments_type_sequence ')' return_type
     ;
 
-arguments_type_list:
+arguments_type_sequence:
 
     | argument_name argument_type
-    | argument_name argument_type ',' arguments_type_list
+    | argument_name argument_type ',' arguments_type_sequence
     ;
 
 argument_name:
@@ -60,11 +60,13 @@ argument_name:
     ;
 
 argument_type:
-      type_declaration
+
+    | type_declaration
     ;
 
 return_type:
-      type_declaration
+
+    | type_declaration
     ;
 
 type_declaration:
@@ -85,12 +87,12 @@ function_body:
     ;
 
 block:
-      INDENT statements_list DEDENT
+      INDENT statements_sequence DEDENT
     ;
 
-statements_list:
+statements_sequence:
       statement
-    | statement statements_list
+    | statement statements_sequence
     ;
 
 statement:
@@ -109,7 +111,7 @@ expression2:
     ;
 
 expression3:
-      expression4 '(' arguments_list ')'
+      expression4 '(' arguments_sequence ')'
     | expression4
     ;
 
@@ -119,10 +121,10 @@ expression4:
     | '(' expression ')'
     ;
 
-arguments_list:
+arguments_sequence:
 
     | argument
-    | argument ',' arguments_list
+    | argument ',' arguments_sequence
     ;
 
 argument:
