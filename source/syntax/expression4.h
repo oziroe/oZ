@@ -9,9 +9,9 @@
 #ifndef OZ_SOURCE_SYNTAX_EXPRESSION4_H
 #define OZ_SOURCE_SYNTAX_EXPRESSION4_H
 
-typedef struct Expression4 OzExpression4;
+typedef struct Expression4 *OzExpression4;
 
-OzExpression4 *oz_create_expression4_integer(int value);
-OzExpression4 *oz_create_expression4_identifier(char *name);
+OzExpression4 oz_create_expression4_integer(int value);
+OzExpression4 oz_create_expression4_identifier(char *name);
 
 #endif

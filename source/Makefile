@@ -7,7 +7,9 @@
 all: main
 	cp main oz
 
-main: lexical.o grammer.o syntax/expression4.o
+syntax_node = expression4 expression3
+
+main: lexical.o grammer.o $(syntax_node:%=syntax/%.o)
 lexical.o: grammer.c
 grammer.c: YFLAGS += -d
 
