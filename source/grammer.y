@@ -38,89 +38,119 @@ typedef void *Node;
 %%
 
 declarations:
+    /* empty */
 
+    /* declaration */
     | declarations declaration
     ;
 
 declaration:
+    /* function */
       function_declaration
     ;
 
 function_declaration:
+    /* default */
       function_name function_type function_body
     ;
 
 function_name:
+    /* identifier */
       IDENTIFIER
     ;
 
 function_type:
+    /* default */
       '(' arguments_type_sequence ')' return_type
     ;
 
 arguments_type_sequence:
+    /* empty */
 
+    /* simgle */
     | argument_name argument_type
-    | argument_name argument_type ',' arguments_type_sequence
+    /* sequence */
+    | arguments_type_sequence ',' argument_name argument_type
     ;
 
 argument_name:
+    /* identifier */
       IDENTIFIER
     ;
 
 argument_type:
+    /* omit */
 
+    /* declaration */
     | type_declaration
     ;
 
 return_type:
+    /* omit */
 
+    /* declaration */
     | type_declaration
     ;
 
 type_declaration:
+    /* colon */
       ':' type_name
     ;
 
 type_name:
+    /* identifier */
       IDENTIFIER
+    /* modifier */
     | type_modifier type_name
     ;
 
 type_modifier:
+    /* pointer */
       '>'
     ;
 
 function_body:
+    /* block */
       block
     ;
 
 block:
+    /* default */
       INDENT statements_sequence DEDENT
     ;
 
 statements_sequence:
+    /* statement */
       statement
-    | statement statements_sequence
+    /* sequence */
+    | statements_sequence statement
     ;
 
 statement:
+    /* return */
       RETURN expression
+    /* if */
     | IF expression block ELSE block
     ;
 
 expression:
+    /* operator */
       expression2 OPERATOR expression
+    /* expression2 */
     | expression2
     ;
 
 expression2:
+    /* unary */
       UNARY expression3
+    /* expression3 */
     | expression3
     ;
 
 expression3:
+    /* apply */
       expression4 '(' arguments_sequence ')'
+    /* expression4 */
     | expression4
     {
         $$ = (Node)oz_create_expression3_expression4((OzExpression4)$1);
@@ -128,18 +158,25 @@ expression3:
     ;
 
 expression4:
+    /* integer */
       INTEGER               { $$ = (Node)oz_create_expression4_integer($1);     }
+    /* identifier */
     | IDENTIFIER            { $$ = (Node)oz_create_expression4_identifier($1);  }
+    /* expression */
     | '(' expression ')'
     ;
 
 arguments_sequence:
+    /* empty */
 
+    /* argument */
     | argument
+    /* sequence */
     | argument ',' arguments_sequence
     ;
 
 argument:
+    /* expression */
       expression
     ;
 
