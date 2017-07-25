@@ -10,7 +10,7 @@ Main(argv: >>Char): Int
     return AbsAdd(-44, 2)
 
 ; Solve the absolute value of sum of two int.
-AbsAdd(x: Int, y: Int): Int
+AbsAdd(x: Int, y: Int)  ; The return type will be infered.
     if x * y >= 0
         return x + y
     else
