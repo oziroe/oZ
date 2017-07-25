@@ -130,7 +130,17 @@ statement:
       /* return */
       RETURN expression
     | /* if */
-      IF expression block ELSE block
+      IF expression true_block ELSE false_block
+    ;
+
+true_block:
+      /* default */
+      block
+    ;
+
+false_block:
+      /* default */
+      block
     ;
 
 expression:
