@@ -29,13 +29,19 @@ end
 pure_rule = rule_text.remove_code_blocks
 
 rules = pure_rule.split(';').select{ |r| r.strip != '' }
-rules_map = {}
+rules_map = Hash.new
 rules.each do |rule_text|
-    splited = rule_text.split(/(?<!'):(?!')/)  # Ignore quoted ones.
-    name, content = splited[0].strip, splited[1]
+    splited = rule_text.split(':', 2)
+    name, content = splited[0].strip, splited[1].strip
     rules = content.split('|').map(&:strip)
-    rules_map[name] = rules.map(&:split)
+    rules_map[name] = rules.map do |rule|
+        rule_splited = rule.match(/\/\*(.*)\*\/(.*)/m)
+        rule_name, rule_content = rule_splited[1].strip, rule_splited[2].strip
+        {:type => rule_name, :rule => rule_content.split}
+    end
 end
+
+puts rules_map
 
 output_folder, extend_folder = ARGV[1], ARGV[2]
 rules_map.each do |name, rules|
@@ -56,12 +62,14 @@ rules_map.each do |name, rules|
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#{rules.flatten.uniq.select{ |term| rules_map.include?(term) and term != name }
+#{rules.map{ |rule_map| rule_map[:rule] }.flatten.uniq.select{ |term| rules_map.include?(term) and term != name }
     .map{ |term| "#include \"#{term}.h\""}.join("\n") }
 #{File.exist?(File.join(extend_folder, "#{name}.h")) ?
     "#include \"../#{extend_folder}/#{name}.h\"" : ""}
 
+typedef struct {
 
+};
 
 #endif
 EOF

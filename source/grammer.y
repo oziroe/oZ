@@ -38,145 +38,145 @@ typedef void *Node;
 %%
 
 declarations:
-    /* empty */
+      /* empty */
 
-    /* declaration */
-    | declarations declaration
+    | /* declaration */
+      declarations declaration
     ;
 
 declaration:
-    /* function */
+      /* function */
       function_declaration
     ;
 
 function_declaration:
-    /* default */
+      /* default */
       function_name function_type function_body
     ;
 
 function_name:
-    /* identifier */
+      /* identifier */
       IDENTIFIER
     ;
 
 function_type:
-    /* default */
+      /* default */
       '(' arguments_type_sequence ')' return_type
     ;
 
 arguments_type_sequence:
-    /* empty */
+      /* empty */
 
-    /* simgle */
-    | argument_name argument_type
-    /* sequence */
-    | arguments_type_sequence ',' argument_name argument_type
+    | /* simgle */
+      argument_name argument_type
+    | /* sequence */
+      arguments_type_sequence ',' argument_name argument_type
     ;
 
 argument_name:
-    /* identifier */
+      /* identifier */
       IDENTIFIER
     ;
 
 argument_type:
-    /* omit */
+      /* omit */
 
-    /* declaration */
-    | type_declaration
+    | /* declaration */
+      type_declaration
     ;
 
 return_type:
-    /* omit */
+      /* omit */
 
-    /* declaration */
-    | type_declaration
+    | /* declaration */
+      type_declaration
     ;
 
 type_declaration:
-    /* colon */
+      /* colon */
       ':' type_name
     ;
 
 type_name:
-    /* identifier */
+      /* identifier */
       IDENTIFIER
-    /* modifier */
-    | type_modifier type_name
+    | /* modifier */
+      type_modifier type_name
     ;
 
 type_modifier:
-    /* pointer */
+      /* pointer */
       '>'
     ;
 
 function_body:
-    /* block */
+      /* block */
       block
     ;
 
 block:
-    /* default */
+      /* default */
       INDENT statements_sequence DEDENT
     ;
 
 statements_sequence:
-    /* statement */
+      /* statement */
       statement
-    /* sequence */
-    | statements_sequence statement
+    | /* sequence */
+      statements_sequence statement
     ;
 
 statement:
-    /* return */
+      /* return */
       RETURN expression
-    /* if */
-    | IF expression block ELSE block
+    | /* if */
+      IF expression block ELSE block
     ;
 
 expression:
-    /* operator */
+      /* operator */
       expression2 OPERATOR expression
-    /* expression2 */
-    | expression2
+    | /* expression2 */
+      expression2
     ;
 
 expression2:
-    /* unary */
+      /* unary */
       UNARY expression3
-    /* expression3 */
-    | expression3
+    | /* expression3 */
+      expression3
     ;
 
 expression3:
-    /* apply */
+      /* apply */
       expression4 '(' arguments_sequence ')'
-    /* expression4 */
-    | expression4
+    | /* expression4 */
+      expression4
     {
         $$ = (Node)oz_create_expression3_expression4((OzExpression4)$1);
     }
     ;
 
 expression4:
-    /* integer */
+      /* integer */
       INTEGER               { $$ = (Node)oz_create_expression4_integer($1);     }
-    /* identifier */
-    | IDENTIFIER            { $$ = (Node)oz_create_expression4_identifier($1);  }
-    /* expression */
-    | '(' expression ')'
+    | /* identifier */
+      IDENTIFIER            { $$ = (Node)oz_create_expression4_identifier($1);  }
+    | /* expression */
+      '(' expression ')'
     ;
 
 arguments_sequence:
-    /* empty */
+      /* empty */
 
-    /* argument */
-    | argument
-    /* sequence */
-    | argument ',' arguments_sequence
+    | /* argument */
+      argument
+    | /* sequence */
+      argument ',' arguments_sequence
     ;
 
 argument:
-    /* expression */
+      /* expression */
       expression
     ;
 
