@@ -7,6 +7,6 @@
 #ifndef SOURCE_SYNEXTS_EXPRESSION4_H
 #define SOURCE_SYNEXTS_EXPRESSION4_H
 
-// something...
+// something..
 
 #endif
