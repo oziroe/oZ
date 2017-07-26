@@ -9,7 +9,7 @@
 #
 require "Date"
 
-$yacc_text = File.read(ARGV[0])
+$yacc_text = File.read(ARGV[1])
 $rule_text = $yacc_text[/.*%%([^%]*)%%.*/, 1]
 
 def $rule_text.remove_code_blocks
@@ -45,6 +45,12 @@ $rules_type = Hash.new
 $rules_map.keys.each do |name|
     $rules_type[name] = name.split('_').collect(&:capitalize).join
 end
+
+if ARGV[0] == 'names'
+    puts $rules_map.keys
+    exit 0
+end
+
 $additional_types = {
     'IDENTIFIER'    => 'char *',
     'INTEGER'       => 'int',
@@ -70,7 +76,7 @@ class String
     end
 end
 
-$output_folder, $extend_folder = ARGV[1], ARGV[2]
+$output_folder, $extend_folder = ARGV[2], ARGV[3]
 $rules_map.each do |name, rules|
     header_tag = "OZ_SOURCE_#{$output_folder.upcase}_#{name.upcase}_H"
     included_terms = rules.map{ |rule_map| rule_map[:rule] }.flatten.uniq.
@@ -144,7 +150,7 @@ EOF
     end
 end
 
-$file_name = ARGV[3]
+$file_name = ARGV[4]
 File.open($file_name, 'w') do |file|
     file <<
 <<-COMMENT_END
