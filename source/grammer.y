@@ -8,9 +8,7 @@
 %{
 
 #include <stdio.h>
-
-#include "syntax/expression4.h"
-#include "syntax/expression3.h"
+#include "syntax.h"
 
 // Prevent compiler warnings.
 extern int  yylex(void);
@@ -32,8 +30,6 @@ typedef void *Node;
 %token INDENT DEDENT
 %token <string_value> IDENTIFIER OPERATOR UNARY
 %token <integer_value> INTEGER
-
-%type <node_value> expression4 expression3
 
 %%
 
@@ -162,16 +158,13 @@ expression3:
       expression4 '(' arguments_sequence ')'
     | /* expression4 */
       expression4
-    {
-        $$ = (Node)oz_create_expression3_expression4((OzExpression4)$1);
-    }
     ;
 
 expression4:
       /* integer */
-      INTEGER               { $$ = (Node)oz_create_expression4_integer($1);     }
+      INTEGER
     | /* identifier */
-      IDENTIFIER            { $$ = (Node)oz_create_expression4_identifier($1);  }
+      IDENTIFIER
     | /* expression */
       '(' expression ')'
     ;

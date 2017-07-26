@@ -14,9 +14,9 @@ lexical.o: grammer.c
 grammer.c: YFLAGS += -d
 grammer.o: syntax.rb grammer.c
 	test -d synauto || mkdir synauto
-	./syntax.rb grammer.y synauto synext
+	./syntax.rb grammer.y synauto synext syntax.h
 	cc -c grammer.c
 
 .PHONY: clean
 clean:
-	rm *.o *.tab.h grammer.c main syntax/*.o synauto/*
+	rm *.o *.tab.h grammer.c main syntax/*.o synauto/* syntax.h
